@@ -1,12 +1,25 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { gsap } from 'gsap';
 
 const Hero = () => {
+  //? Animations with gsap
+  const heroTextRef = useRef(null);
+  const heroImageRef = useRef(null);
+  useEffect(() => {
+    gsap
+      .timeline()
+      .from(heroTextRef.current.childNodes[0], { y: 50, opacity: 0, duration: 0.5 })
+      .from(heroTextRef.current.childNodes[1], { y: 50, opacity: 0, duration: 0.5 }, 0.2)
+      .from(heroTextRef.current.childNodes[2], { y: 50, opacity: 0, duration: 0.5 }, 0.4)
+      .from(heroImageRef.current, { opacity: 0, duration: 0.5 }, 0.8);
+  }, []);
+
   return (
     <div className="hero text-center sm:text-left">
       <div className="hero-content flex-col lg:flex-row-reverse">
-        <img src="/logo512.png" className="hidden sm:block max-w-sm rounded-lg object-scale-down" />
-        <div className="p-4 sm:p-12">
+        <img ref={heroImageRef} src="/logo512.png" alt="Logo de la Parroquia Misericordia Divina" className="hidden sm:block max-w-sm rounded-lg object-scale-down" />
+        <div ref={heroTextRef} className="p-4 sm:p-12">
           <h1 className="text-4xl sm:text-5xl font-bold">Bienvenido al panel principal del pulguero.</h1>
           <p className="py-6">Desde aquí podrás administrar la plataforma virtual del pulguero perteneciente a la parroquia misericordia divina.</p>
           <div className="flex justify-center sm:justify-start">
@@ -18,7 +31,7 @@ const Hero = () => {
                 </svg>
               </button>
             </Link>
-            <a href="https://pulguero.vercel.app/" target="_blank" className="btn btn-outline btn-primary">
+            <a href="https://pulguero.vercel.app/" target="_blank" rel="noreferrer" className="btn btn-outline btn-primary">
               Tienda online
             </a>
           </div>
