@@ -1,11 +1,16 @@
+import { AuthContextWrapper } from '@hooks/useAuth';
 import MainLayout from '@layout/MainLayout';
 import '@styles/globals.scss';
 
 function MyApp({ Component, pageProps }) {
   return (
-    <MainLayout>
-      <Component {...pageProps} />
-    </MainLayout>
+    <>
+      <AuthContextWrapper>
+        <MainLayout>
+          <Component {...pageProps} />
+        </MainLayout>
+      </AuthContextWrapper>
+    </>
   );
 }
 

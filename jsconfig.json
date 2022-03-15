@@ -8,7 +8,10 @@
       "@pages/*": ["pages/*"],
       "@layout/*": ["layout/*"],
       "@styles/*": ["styles/*"],
-      "@assets/*": ["assets/*"]
+      "@config/*": ["config/*"],
+      "@assets/*": ["assets/*"],
+      "@hooks/*": ["hooks/*"],
+      "@services/*": ["services/*"]
     }
   },
   "exclude": ["node_modules", "dist"]

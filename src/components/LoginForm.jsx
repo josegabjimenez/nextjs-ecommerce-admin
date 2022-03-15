@@ -1,17 +1,28 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
+import { useAuth } from '@hooks/useAuth';
 
 const Form = () => {
+  const { user, logIn } = useAuth();
   const formRef = useRef();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(formRef.current);
     const data = {
       email: formData.get('email'),
       password: formData.get('password'),
     };
-    console.log(data);
+    try {
+      await logIn(data.email, data.password);
+      console.log('Logged in successfully');
+    } catch (err) {
+      console.log('An error has ocurred', err);
+    }
   };
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
 
   return (
     <form ref={formRef} className="flex flex-col items-center bg-white rounded-lg  p-12 w-screen sm:w-auto sm:shadow-lg" onSubmit={handleSubmit}>
