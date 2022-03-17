@@ -1,11 +1,15 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@hooks/useAuth';
 
 const Form = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState({ err: false, message: '' });
   const { user, logIn } = useAuth();
   const formRef = useRef();
 
+  // Send info to the backend for make the login
   const handleSubmit = async (e) => {
+    setIsLoading(true);
     e.preventDefault();
     const formData = new FormData(formRef.current);
     const data = {
@@ -15,9 +19,16 @@ const Form = () => {
     try {
       await logIn(data.email, data.password);
       console.log('Logged in successfully');
+      setIsLoading(false);
     } catch (err) {
-      console.log('An error has ocurred', err);
+      setIsError({ err: true, message: 'Ha ocurrido un error.' });
+      setIsLoading(false);
     }
+  };
+
+  // Reset the error state in order to close error alerts
+  const closeErrorAlert = () => {
+    setIsError({ err: false, message: '' });
   };
 
   useEffect(() => {
@@ -26,6 +37,7 @@ const Form = () => {
 
   return (
     <form ref={formRef} className="flex flex-col items-center bg-white rounded-lg  p-12 w-screen sm:w-auto sm:shadow-lg" onSubmit={handleSubmit}>
+      {/* Email and password fields */}
       <div>
         <label className="font-semibold text-xs sm:text-base" htmlFor="usernameField">
           Username or Email
@@ -38,15 +50,33 @@ const Form = () => {
         </label>
         <input id="passwordField" name="password" className="flex items-center h-12 px-4 w-64 bg-gray-200 mt-2 rounded focus:outline-none focus:ring-2 focus:ring-primary" type="password" />
       </div>
-      <button className="btn btn-primary flex h-12 px-6 w-64 mt-8 rounded font-semibold text-sm text-white">Login</button>
+
+      {/* Login button */}
+      <button className={`btn btn-primary flex h-12 px-6 w-64 mt-8 rounded font-semibold text-sm text-white ${isLoading && 'loading'}`} disabled={isLoading && 'disabled'}>
+        Login
+      </button>
+
+      {/* Error alert */}
+      {isError.err && (
+        <div className="alert alert-error shadow-lg mt-4 p-0 w-64">
+          <div>
+            <svg onClick={() => closeErrorAlert()} xmlns="http://www.w3.org/2000/svg" className="hover:text-black cursor-pointer	stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{isError.message}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Forgot password and Sign up section */}
       <div className="flex mt-6 justify-center text-xs sm:text-sm">
-        <a className="text-blue-400 hover:text-primary" href="#">
+        <button className="text-blue-400 hover:text-primary" href="#">
           Forgot Password
-        </a>
+        </button>
         <span className="mx-2 text-gray-300">/</span>
-        <a className="text-blue-400 hover:text-primary" href="#">
+        <button className="text-blue-400 hover:text-primary" href="#">
           Sign Up
-        </a>
+        </button>
       </div>
     </form>
   );

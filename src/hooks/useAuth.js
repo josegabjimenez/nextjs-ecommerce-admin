@@ -32,7 +32,9 @@ const useProviderAuth = () => {
       },
     };
     const { data } = await axios.post(endPoints.auth.login, { email, password }, options);
-    console.log(data);
+    if (data) {
+      Cookie.set('access_token', data.access_token, { expires: 5 });
+    }
   };
 
   return {
