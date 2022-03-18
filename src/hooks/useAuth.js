@@ -33,12 +33,26 @@ const useProviderAuth = () => {
     };
     const { data } = await axios.post(endPoints.auth.login, { email, password }, options);
     if (data) {
-      Cookie.set('access_token', data.access_token, { expires: 5 });
+      const token = data.access_token;
+      Cookie.set('access_token', token, { expires: 5 }); // Token added to the cookies
+
+      axios.defaults.headers.Authorization = `Bearer ${token}`; // Token was set up to headers
+      // const { data: userData } = await axios.get(endPoints.auth.profile);
+      // setUser(userData);
+      const fakeUser = {
+        name: 'Jose Gabriel',
+      };
+      setUser(fakeUser);
     }
+  };
+
+  const logOut = () => {
+    setUser(null);
   };
 
   return {
     user,
     logIn,
+    logOut,
   };
 };

@@ -1,25 +1,27 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useAuth } from '@hooks/useAuth';
+import { useRouter } from 'next/router';
 
 const Form = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState({ err: false, message: '' });
-  const { user, logIn } = useAuth();
-  const formRef = useRef();
+  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [isError, setIsError] = useState({ err: false, message: '' }); // Error alert state
+  const { logIn } = useAuth(); // Auth methods
+  const router = useRouter(); // Next router instance
+  const formRef = useRef(); // Ref to the form
 
   // Send info to the backend for make the login
   const handleSubmit = async (e) => {
-    setIsLoading(true);
+    setIsLoading(true); // Start loading
     e.preventDefault();
-    const formData = new FormData(formRef.current);
+    const formData = new FormData(formRef.current); // Takes data from the fields
     const data = {
       email: formData.get('email'),
       password: formData.get('password'),
     };
     try {
-      await logIn(data.email, data.password);
-      console.log('Logged in successfully');
-      setIsLoading(false);
+      await logIn(data.email, data.password); // Log in function
+      setIsLoading(false); // Finish loading
+      router.push('/dashboard'); // Redirect to dashboard page
     } catch (err) {
       setIsError({ err: true, message: 'Ha ocurrido un error.' });
       setIsLoading(false);
@@ -30,10 +32,6 @@ const Form = () => {
   const closeErrorAlert = () => {
     setIsError({ err: false, message: '' });
   };
-
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
 
   return (
     <form ref={formRef} className="flex flex-col items-center bg-white rounded-lg  p-12 w-screen sm:w-auto sm:shadow-lg" onSubmit={handleSubmit}>

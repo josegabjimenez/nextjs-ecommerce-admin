@@ -1,7 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
+import { useAuth } from '@hooks/useAuth';
+import { useRouter } from 'next/router';
 
 const Header = () => {
+  const auth = useAuth();
+  const route = useRouter();
   const links = [
     {
       title: 'Dashboard',
@@ -13,8 +17,14 @@ const Header = () => {
     },
   ];
 
+  // Logout user function
+  const handleLogout = () => {
+    auth.logOut();
+    route.push('/');
+  };
+
   return (
-    <div className="navbar bg-base-100 w-full align-center">
+    <div className="navbar bg-base-100 w-full align-center px-5">
       <div className="navbar-start gap-3">
         <div className="sm:hidden dropdown">
           <button className="btn btn-square btn-outline border-none">
@@ -23,6 +33,7 @@ const Header = () => {
             </svg>
           </button>
 
+          {/* Mobile menu */}
           <ul className="dropdown-content menu p-2 shadow-lg bg-primary text-white rounded-box w-52">
             {links.map((link) => (
               <li key={`mobile-${link.href}`} className="font-bold">
@@ -32,24 +43,49 @@ const Header = () => {
           </ul>
         </div>
 
+        {/* Desktop Links */}
         <Link href="/" passHref>
           <button className="hidden sm:block btn btn-ghost normal-case text-xl no-animation text-primary">Pulguero</button>
         </Link>
-        {links.map((link) => (
-          <Link key={link.href} href={link.href} passHref>
-            <button className="hidden sm:block btn btn-outline border-none">{link.title}</button>
-          </Link>
-        ))}
+        {auth.user &&
+          links.map((link) => (
+            <Link key={link.href} href={link.href} passHref>
+              <button className="hidden sm:block btn btn-outline border-none">{link.title}</button>
+            </Link>
+          ))}
       </div>
       <div className="navbar-end">
-        <Link href="/login" passHref>
-          <button className="btn btn-primary text-white no-animation gap-2">
-            Ingresar
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 m-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </button>
-        </Link>
+        {/* Info side */}
+        {!auth.user ? (
+          <Link href="/login" passHref>
+            <button className="btn btn-primary text-white no-animation gap-2">
+              Ingresar
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 m-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </button>
+          </Link>
+        ) : (
+          <div className="dropdown dropdown-end">
+            <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
+              <div className="w-10 rounded-full">
+                {/* <img src="https://api.lorem.space/image/face?hash=33791" /> */}
+                <img src={`https://ui-avatars.com/api/?background=random&name=${auth.user.name}`} />
+              </div>
+            </label>
+            <ul tabIndex={0} className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-primary text-white rounded-box w-52">
+              <li>
+                <a className="justify-between">
+                  Profile
+                  <span className="badge badge-secondary">New</span>
+                </a>
+              </li>
+              <li>
+                <button onClick={() => handleLogout()}>Logout</button>
+              </li>
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );
