@@ -10,17 +10,19 @@ const Header = () => {
     {
       title: 'Dashboard',
       href: '/dashboard',
+      style: `hidden sm:block btn btn-neutral ${route.pathname != '/dashboard' && 'btn-outline'} border-none`,
     },
     {
-      title: 'Products',
+      title: 'Productos',
       href: '/products',
+      style: `hidden sm:block btn btn-neutral ${route.pathname != '/products' && 'btn-outline'} border-none`,
     },
   ];
 
   // Logout user function
   const handleLogout = () => {
     auth.logOut();
-    route.push('/');
+    route.push('/'); // Redirects to landing page
   };
 
   return (
@@ -50,7 +52,7 @@ const Header = () => {
         {auth.user &&
           links.map((link) => (
             <Link key={link.href} href={link.href} passHref>
-              <button className="hidden sm:block btn btn-outline border-none">{link.title}</button>
+              <button className={link.style}>{link.title}</button>
             </Link>
           ))}
       </div>
@@ -75,13 +77,13 @@ const Header = () => {
             </label>
             <ul tabIndex={0} className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-primary text-white rounded-box w-52">
               <li>
-                <a className="justify-between">
-                  Profile
-                  <span className="badge badge-secondary">New</span>
-                </a>
+                <button className="justify-between">
+                  Perfil
+                  <span className="badge badge-secondary">Nuevo</span>
+                </button>
               </li>
               <li>
-                <button onClick={() => handleLogout()}>Logout</button>
+                <button onClick={() => handleLogout()}>Cerrar sesión</button>
               </li>
             </ul>
           </div>

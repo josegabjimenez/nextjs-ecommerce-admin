@@ -21,7 +21,7 @@ const Form = () => {
     try {
       await logIn(data.email, data.password); // Log in function
       setIsLoading(false); // Finish loading
-      router.push('/dashboard'); // Redirect to dashboard page
+      router.push('/products'); // Redirect to dashboard page
     } catch (err) {
       setIsError({ err: true, message: 'Ha ocurrido un error.' });
       setIsLoading(false);
@@ -38,20 +38,20 @@ const Form = () => {
       {/* Email and password fields */}
       <div>
         <label className="font-semibold text-xs sm:text-base" htmlFor="usernameField">
-          Username or Email
+          Email
         </label>
         <input id="usernameField" name="email" className="flex items-center h-12 px-4 w-64 bg-gray-200 mt-2 rounded focus:outline-none focus:ring-2 focus:ring-primary mb-4" type="text" />
       </div>
       <div>
         <label className="font-semibold text-xs sm:text-base mt-3" htmlFor="passwordField">
-          Password
+          Contraseña
         </label>
         <input id="passwordField" name="password" className="flex items-center h-12 px-4 w-64 bg-gray-200 mt-2 rounded focus:outline-none focus:ring-2 focus:ring-primary" type="password" />
       </div>
 
       {/* Login button */}
       <button className={`btn btn-primary flex h-12 px-6 w-64 mt-8 rounded font-semibold text-sm text-white ${isLoading && 'loading'}`} disabled={isLoading && 'disabled'}>
-        Login
+        Ingresar
       </button>
 
       {/* Error alert */}
@@ -69,11 +69,11 @@ const Form = () => {
       {/* Forgot password and Sign up section */}
       <div className="flex mt-6 justify-center text-xs sm:text-sm">
         <button className="text-blue-400 hover:text-primary" href="#">
-          Forgot Password
+          ¿Olvidaste la contraseña?
         </button>
         <span className="mx-2 text-gray-300">/</span>
         <button className="text-blue-400 hover:text-primary" href="#">
-          Sign Up
+          Registrarse
         </button>
       </div>
     </form>
