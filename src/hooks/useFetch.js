@@ -20,7 +20,7 @@ const useFetch = (endpoint) => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [endpoint]);
 
   return { data, isLoading, isError };
 };

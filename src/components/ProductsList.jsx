@@ -2,9 +2,14 @@ import React from 'react';
 import Image from 'next/image';
 import { EditProductModal } from '@components/index';
 
-const ProductsList = ({ products }) => {
+const ProductsList = ({ products, onUpdateProducts, currentPage, totalPages, goToPage }) => {
+  const buttons = [];
+  for (let i = 0; i < totalPages; i++) {
+    buttons.push(i + 1);
+  }
+
   return (
-    <div className="">
+    <>
       <table className="table hidden overflow-hidden sm:block">
         {/* head */}
         <thead className="">
@@ -62,7 +67,7 @@ const ProductsList = ({ products }) => {
                         <div className="w-full no-animation flex justify-end gap-2">
                           {/* Modal action buttons */}
                           <button className="btn btn-primary">Guardar cambios</button>
-                          <label for={`edit-product-modal-${product.id}`} className="btn btn-primary btn-outline">
+                          <label htmlFor={`edit-product-modal-${product.id}`} className="btn btn-primary btn-outline">
                             Cancelar
                           </label>
                         </div>
@@ -79,7 +84,52 @@ const ProductsList = ({ products }) => {
           })}
         </tbody>
       </table>
-    </div>
+
+      {/* Pagination */}
+      {/* Buttons per page */}
+      <div className="btn-group flex justify-center mt-4">
+        {currentPage >= 5 && (
+          <>
+            <button className={`btn ${currentPage === 1 && 'btn-active'}`} onClick={() => goToPage(1)}>
+              1
+            </button>
+            <button className="btn">...</button>
+          </>
+        )}
+        {buttons.map((buttonPage) => {
+          if (buttonPage >= currentPage - 3 && buttonPage <= currentPage + 3) {
+            return (
+              <>
+                <button key={`button-product-page-${buttonPage}`} className={`btn ${currentPage === buttonPage && 'btn-active'}`} onClick={() => goToPage(buttonPage)}>
+                  {buttonPage}
+                </button>
+              </>
+            );
+          }
+        })}
+        {currentPage <= totalPages - 4 && (
+          <>
+            <button className="btn">...</button>
+            <button className={`btn ${currentPage === totalPages && 'btn-active'}`} onClick={() => goToPage(totalPages)}>
+              {totalPages}
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* Next and back buttons */}
+      <div className="btn-group flex justify-center mt-4">
+        <button className="btn" onClick={() => onUpdateProducts('back')}>
+          «
+        </button>
+        <button className="btn" onClick={() => goToPage(1)}>
+          Página {currentPage}
+        </button>
+        <button className="btn" onClick={() => onUpdateProducts('next')}>
+          »
+        </button>
+      </div>
+    </>
   );
 };
 
