@@ -26,15 +26,6 @@ const EditProductModal = ({ product }) => {
         Descripción:
       </label>
       <textarea id={`edit-product-description-${product.id}`} className="textarea textarea-bordered" placeholder="Descripción del producto" defaultValue={product.description} />
-
-      {/* <label className="text-md font-bold">Título:</label>
-      <input type="text" placeholder="Type here" className="input input-bordered input-primary input-sm w-full max-w-xs" />
-
-      <label className="text-md font-bold">Título:</label>
-      <input type="text" placeholder="Type here" className="input input-bordered input-primary input-sm w-full max-w-xs" />
-
-      <label className="text-md font-bold">Título:</label>
-      <input type="text" placeholder="Type here" className="input input-bordered input-primary input-sm w-full max-w-xs" /> */}
     </div>
   );
 };

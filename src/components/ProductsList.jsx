@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import { EditProductModal } from '@components/index';
+import { EditProductModal, Modal } from '@components/index';
 
 const ProductsList = ({ products, onUpdateProducts, currentPage, totalPages, goToPage }) => {
   const buttons = [];
@@ -9,20 +9,20 @@ const ProductsList = ({ products, onUpdateProducts, currentPage, totalPages, goT
   }
 
   return (
-    <>
-      <table className="table hidden overflow-hidden sm:block">
+    <div className="overflow-x-auto w-full">
+      <table className="table hidden overflow-hidden sm:block bg-neutral rounded-2xl rounded-tr-none">
         {/* head */}
-        <thead className="">
+        <thead className="bg-green-500">
           <tr>
-            <th>Información</th>
-            <th>Descripción</th>
-            <th />
-            <th />
+            <th className="bg-neutral text-white">Información</th>
+            <th className="bg-neutral text-white">Descripción</th>
+            <th className="bg-neutral text-white" />
+            <th className="bg-neutral text-white" />
           </tr>
         </thead>
         <tbody>
           {/* Rows */}
-          {products.map((product) => {
+          {products?.map((product) => {
             if (product.images[0]) {
               return (
                 <tr key={product.id}>
@@ -59,20 +59,17 @@ const ProductsList = ({ products, onUpdateProducts, currentPage, totalPages, goT
                     </label>
 
                     {/* Modal to edit a product */}
-                    <input type="checkbox" id={`edit-product-modal-${product.id}`} className="modal-toggle" />
-                    <label htmlFor={`edit-product-modal-${product.id}`} className="modal cursor-pointer">
-                      <label className="modal-box" htmlFor>
-                        {/* Edit product options */}
-                        <EditProductModal product={product} />
-                        <div className="w-full no-animation flex justify-end gap-2">
-                          {/* Modal action buttons */}
-                          <button className="btn btn-primary">Guardar cambios</button>
-                          <label htmlFor={`edit-product-modal-${product.id}`} className="btn btn-primary btn-outline">
-                            Cancelar
-                          </label>
-                        </div>
-                      </label>
-                    </label>
+                    <Modal id={`edit-product-modal-${product.id}`}>
+                      {/* Edit product options */}
+                      <EditProductModal product={product} />
+                      <div className="w-full no-animation flex justify-end gap-2">
+                        {/* Modal action buttons */}
+                        <button className="btn btn-primary">Guardar cambios</button>
+                        <label htmlFor={`edit-product-modal-${product.id}`} className="btn btn-primary btn-outline">
+                          Cancelar
+                        </label>
+                      </div>
+                    </Modal>
                   </td>
                   <td>
                     {/* Delete button */}
@@ -118,7 +115,7 @@ const ProductsList = ({ products, onUpdateProducts, currentPage, totalPages, goT
       </div>
 
       {/* Next and back buttons */}
-      <div className="btn-group flex justify-center mt-4">
+      {/* <div className="btn-group flex justify-center mt-4">
         <button className="btn" onClick={() => onUpdateProducts('back')}>
           «
         </button>
@@ -128,8 +125,8 @@ const ProductsList = ({ products, onUpdateProducts, currentPage, totalPages, goT
         <button className="btn" onClick={() => onUpdateProducts('next')}>
           »
         </button>
-      </div>
-    </>
+      </div> */}
+    </div>
   );
 };
 

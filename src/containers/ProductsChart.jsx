@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'; // Redirect methods
 import { Chart, Loading } from '@components/index';
 import useFetch from '@hooks/useFetch';
 import endPoints from '@services/api/index';
+import NumberFormat from 'react-number-format'; // Gives format to numbers
 
 const ProductsChart = () => {
   const [data, setData] = useState({});
@@ -22,6 +23,13 @@ const ProductsChart = () => {
     populateData();
   }, [allProducts]);
 
+  // This function returns the sum of all products price in the store
+  const calculateTotalPrice = () => {
+    const totalPrice = allProducts.reduce((accumulator, product) => accumulator + product.price, 0);
+    return totalPrice;
+  };
+
+  // Options that will be passed to the chart
   const dataForChart = {
     labels: [],
     datasets: [
@@ -60,9 +68,15 @@ const ProductsChart = () => {
   return (
     <>
       <Chart chartData={dataForChart} />
-      <div className="flex justify-center mt-12 text-lg">
+      <div className="flex flex-col items-center mt-12 text-lg">
         <h4>
-          Total de productos: <b>{allProducts.length}</b>
+          Total de productos: <b className="text-primary">{allProducts.length}</b>
+        </h4>
+        <h4>
+          Dinero total en productos:{' '}
+          <b className="text-primary">
+            <NumberFormat value={calculateTotalPrice()} thousandSeparator={true} prefix="$" displayType="text" />
+          </b>
         </h4>
       </div>
     </>
