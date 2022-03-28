@@ -1,12 +1,20 @@
+// Main
 import Header from './Header';
 import Footer from './Footer';
+import Hero from './Hero';
 import Loading from './Loading';
 import LoginForm from './LoginForm';
+import Chart from './Chart';
+
+// Lists
 import ProductsList from './ProductsList';
+
+// Modals
+import Modal from './Modal';
 import EditProductModal from './EditProductModal';
 import AddProductModal from './AddProductModal';
-import Modal from './Modal';
-import Chart from './Chart';
-import Hero from './Hero';
 
-export { Header, Footer, Loading, LoginForm, ProductsList, EditProductModal, AddProductModal, Modal, Chart, Hero };
+// Alerts
+import WarningAlert from './WarningAlert';
+
+export { Header, Footer, Loading, WarningAlert, LoginForm, ProductsList, EditProductModal, AddProductModal, Modal, Chart, Hero };
