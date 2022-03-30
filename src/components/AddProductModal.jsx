@@ -1,10 +1,14 @@
 import React from 'react';
-import NumberFormat from 'react-number-format';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { WarningAlert } from '@components/index';
+import useFetch from '@hooks/useFetch';
+import endPoints from '@services/api/index';
+import NumberFormat from 'react-number-format';
 
 const AddProductModal = () => {
+  const { data: categories } = useFetch(endPoints.categories.getCategories);
   const {
+    control,
     register,
     handleSubmit,
     formState: { errors },
@@ -12,6 +16,11 @@ const AddProductModal = () => {
 
   const submit = (data) => {
     console.log(data);
+    const fullData = {
+      ...data,
+      price: parseInt(data.price),
+    };
+    console.log(fullData);
   };
 
   return (
@@ -27,9 +36,15 @@ const AddProductModal = () => {
               Título
             </span>
             {/* Input */}
-            <input id="title" {...register('title', { required: true })} type="text" placeholder="Título del producto" className="input input-bordered input-sm" />
+            <input
+              id="title"
+              {...register('title', { required: { value: true, message: 'El campo es requerido' } })}
+              type="text"
+              placeholder="Título del producto"
+              className={`input input-bordered input-sm ${errors.title ? 'border-red-500' : ''}`}
+            />
           </label>
-          {errors?.title?.type === 'required' && <WarningAlert className="text-xs mt-1 rounded-md">No puedes dejar esta campo vacío</WarningAlert>}
+          {errors?.title?.type === 'required' && <WarningAlert className="text-xs mt-1 rounded-md">{errors.title.message}</WarningAlert>}
         </div>
 
         {/* Product price section */}
@@ -46,39 +61,51 @@ const AddProductModal = () => {
               Precio
             </span>
             {/* Input */}
-            <NumberFormat
-              id="price"
-              getInputRef={(input) => {
-                console.log(input);
-              }}
-              // {...register('price', { required: true })}
-              thousandSeparator={true}
-              prefix="$"
-              className="input input-bordered input-sm"
-              inputmode="numeric"
-              placeholder="Precio del producto"
+
+            <Controller
+              name="price"
+              control={control}
+              rules={{ required: { value: true, message: 'El campo es requerido' } }}
+              render={({ field: { value, onChange, name } }) => (
+                <NumberFormat
+                  id={name}
+                  value={value}
+                  onValueChange={(values) => onChange(values.value)}
+                  thousandSeparator={true}
+                  prefix="$"
+                  className={`input input-bordered input-sm ${errors.price ? 'border-red-500' : ''}`}
+                  inputmode="numeric"
+                  placeholder="Precio del producto"
+                />
+              )}
             />
           </label>
-          {errors?.price?.type === 'required' && <WarningAlert className="text-xs mt-1 rounded-md">No puedes dejar esta campo vacío</WarningAlert>}
+          {errors?.price?.type === 'required' && <WarningAlert className="text-xs mt-1 rounded-md">{errors.price.message}</WarningAlert>}
         </div>
 
         {/* Product Category section*/}
-        <label className="input-group input-group-vertical col-span-2">
-          <span className="font-bold">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            Categoria
-          </span>
-          {/* Input */}
-          <select className="select select-bordered font-normal select-sm">
-            <option disabled selected className="">
-              Elige una categoria
-            </option>
-            <option>T-shirts</option>
-            <option>Mugs</option>
-          </select>
-        </label>
+        <div className="col-span-2">
+          <label className="input-group input-group-vertical">
+            <span className="font-bold">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Categoria
+            </span>
+            {/* Input */}
+            <select className="select select-bordered font-normal select-sm" {...register('category', { required: { value: true, message: 'El campo es requerido' } })}>
+              <option disabled selected className="">
+                Elige una categoria
+              </option>
+              {categories?.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          {errors?.category?.type === 'required' && <WarningAlert className="text-xs mt-1 rounded-md">{errors.category.message}</WarningAlert>}
+        </div>
 
         {/* Product category section */}
         <label className="input-group input-group-vertical col-span-2">
