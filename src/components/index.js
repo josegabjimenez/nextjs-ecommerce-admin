@@ -15,6 +15,7 @@ import EditProductModal from './EditProductModal';
 import AddProductModal from './AddProductModal';
 
 // Alerts
+import Alert from './Alert';
 import WarningAlert from './WarningAlert';
 
-export { Header, Footer, Loading, WarningAlert, LoginForm, ProductsList, EditProductModal, AddProductModal, Modal, Chart, Hero };
+export { Header, Footer, Loading, Alert, WarningAlert, LoginForm, ProductsList, EditProductModal, AddProductModal, Modal, Chart, Hero };

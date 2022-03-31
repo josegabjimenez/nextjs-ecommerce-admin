@@ -4,8 +4,9 @@ import { WarningAlert } from '@components/index';
 import useFetch from '@hooks/useFetch';
 import endPoints from '@services/api/index';
 import NumberFormat from 'react-number-format';
+import { addProduct } from '@services/api/products';
 
-const AddProductModal = () => {
+const AddProductModal = ({ setAlert }) => {
   const { data: categories } = useFetch(endPoints.categories.getCategories);
   const {
     control,
@@ -14,15 +15,31 @@ const AddProductModal = () => {
     formState: { errors },
   } = useForm();
 
-  const submit = (data) => {
-    console.log(data);
+  const submit = async (data) => {
     const fullData = {
       ...data,
       price: parseInt(data.price),
       categoryId: parseInt(data.categoryId),
       images: [data.images[0].name],
     };
-    console.log(fullData);
+
+    try {
+      const res = await addProduct(fullData);
+      console.log(res);
+      setAlert({
+        active: true,
+        type: 'success',
+        message: 'Producto añadido correctamente',
+        autoClose: true,
+      });
+    } catch (err) {
+      setAlert({
+        active: true,
+        type: 'error',
+        message: 'Error al añadir el producto',
+        autoClose: false,
+      });
+    }
   };
 
   return (

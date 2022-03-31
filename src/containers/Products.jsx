@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@hooks/useAuth'; // Auth methods
 import { useRouter } from 'next/router'; // Redirect methods
-import { AddProductModal, Loading, Modal, ProductsList } from '@components/index';
+import { AddProductModal, Loading, Modal, ProductsList, Alert } from '@components/index';
 import useFetch from '@hooks/useFetch';
 import endPoints from '@services/api/index';
+import useAlert from '@hooks/useAlert';
 
 let PRODUCTS_LIMIT = 5;
 
 const Products = () => {
+  const { alert, setAlert, toggleAlert } = useAlert();
   const route = useRouter();
   const auth = useAuth();
   const [productOffset, setProductOffset] = useState(0);
@@ -37,12 +39,17 @@ const Products = () => {
     checkIfLoggedIn();
   }, []);
 
+  useEffect(() => {
+    console.log(alert);
+  }, [alert]);
+
   if (isLoading) {
     return <Loading />;
   }
 
   return (
     <>
+      <Alert alert={alert} handleClose={toggleAlert} />
       <div className="flex justify-end relative h-12">
         {/* Button to open "Add Product" modal */}
         <label htmlFor="add-product-modal" className="btn btn-primary text-white rounded-b-none no-animation transition-all gap-2 absolute -bottom-2 hover:bottom-0">
@@ -53,7 +60,7 @@ const Products = () => {
         </label>
         {/* "Add Product" Modal */}
         <Modal id="add-product-modal">
-          <AddProductModal />
+          <AddProductModal setAlert={setAlert} />
         </Modal>
       </div>
       <ProductsList
