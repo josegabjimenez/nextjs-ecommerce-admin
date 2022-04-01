@@ -1,47 +1,48 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '@hooks/useAuth'; // Auth methods
-import { useRouter } from 'next/router'; // Redirect methods
 import { AddProductModal, Loading, Modal, ProductsList, Alert } from '@components/index';
-import useFetch from '@hooks/useFetch';
 import endPoints from '@services/api/index';
+
+// hooks 🪝
+import { useRouter } from 'next/router'; // Redirect methods
+import { useAuth } from '@hooks/useAuth'; // Auth methods
+import useFetch from '@hooks/useFetch';
 import useAlert from '@hooks/useAlert';
+import useModal from '@hooks/useModal';
 
 let PRODUCTS_LIMIT = 5;
 
 const Products = () => {
-  const { alert, setAlert, toggleAlert } = useAlert();
-  const route = useRouter();
-  const auth = useAuth();
-  const [productOffset, setProductOffset] = useState(0);
-  const { data, isLoading } = useFetch(endPoints.products.getProducts(PRODUCTS_LIMIT, productOffset));
-  // const { data, isLoading } = useFetch('https://nodejs-ecommerce-test.herokuapp.com/api/v1/products');
-  const { data: totalData } = useFetch(endPoints.products.getProducts(0, 0));
+  // hooks
+  const { modal, setModal } = useModal(); // Modal methods
+  const { alert, setAlert, toggleAlert } = useAlert(); // Alert methods
+  const route = useRouter(); // Redirect methods
+  const auth = useAuth(); // Auth methods
+  const [productOffset, setProductOffset] = useState(0); // Pagination
+  const { data, isLoading } = useFetch(endPoints.products.getProducts(PRODUCTS_LIMIT, productOffset)); // Fetch products with pagination
+  const { data: totalData } = useFetch(endPoints.products.getProducts(0, 0)); // Fetch total products
 
+  // Fetch products by pagination using offset and limit
   const handleUpdateProducts = (action) => {
     if (action === 'next') setProductOffset(productOffset + 5);
     if (action === 'back' && productOffset != 0) setProductOffset(productOffset - 5);
-    console.log(action);
-    console.log(productOffset);
   };
 
+  // Fetch products by a given page number
   const handleGoToPage = (page) => {
     if (page >= 1) setProductOffset(page * PRODUCTS_LIMIT - PRODUCTS_LIMIT);
   };
 
   // Redirects to main page if there is no user logged
-  const checkIfLoggedIn = () => {
+  useEffect(() => {
+    // Checks if there is a user logged
     if (!auth.user) {
       route.push('/');
     }
-  };
+  }, [auth.user, route]);
 
   useEffect(() => {
-    checkIfLoggedIn();
-  }, []);
-
-  useEffect(() => {
-    console.log(alert);
-  }, [alert]);
+    handleGoToPage(1);
+  }, [modal]);
 
   if (isLoading) {
     return <Loading />;
@@ -59,8 +60,8 @@ const Products = () => {
           Añadir un producto
         </label>
         {/* "Add Product" Modal */}
-        <Modal id="add-product-modal">
-          <AddProductModal setAlert={setAlert} />
+        <Modal id="add-product-modal" modal={modal} setModal={setModal}>
+          <AddProductModal setAlert={setAlert} setModal={setModal} />
         </Modal>
       </div>
       <ProductsList

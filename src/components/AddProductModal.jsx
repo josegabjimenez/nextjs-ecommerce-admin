@@ -1,20 +1,23 @@
 import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
+// Components
 import { WarningAlert } from '@components/index';
-import useFetch from '@hooks/useFetch';
-import endPoints from '@services/api/index';
 import NumberFormat from 'react-number-format';
+// Hooks
+import useFetch from '@hooks/useFetch';
+import { useForm, Controller } from 'react-hook-form';
+import endPoints from '@services/api/index';
 import { addProduct } from '@services/api/products';
 
-const AddProductModal = ({ setAlert }) => {
-  const { data: categories } = useFetch(endPoints.categories.getCategories);
+const AddProductModal = ({ setAlert, setModal }) => {
+  const { data: categories } = useFetch(endPoints.categories.getCategories); // Get categories
   const {
     control,
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm(); // Form methods
 
+  // It sends the product to the server and closes the modal
   const submit = async (data) => {
     const fullData = {
       ...data,
@@ -24,8 +27,8 @@ const AddProductModal = ({ setAlert }) => {
     };
 
     try {
-      const res = await addProduct(fullData);
-      console.log(res);
+      await addProduct(fullData);
+      setModal({ close: true });
       setAlert({
         active: true,
         type: 'success',
