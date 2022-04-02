@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { AddProductModal, Loading, Modal, ProductsList, Alert } from '@components/index';
+import axios from 'axios';
 import endPoints from '@services/api/index';
 
 // hooks 🪝
 import { useRouter } from 'next/router'; // Redirect methods
 import { useAuth } from '@hooks/useAuth'; // Auth methods
-import useFetch from '@hooks/useFetch';
 import useAlert from '@hooks/useAlert';
 import useModal from '@hooks/useModal';
 
@@ -18,8 +18,11 @@ const Products = () => {
   const route = useRouter(); // Redirect methods
   const auth = useAuth(); // Auth methods
   const [productOffset, setProductOffset] = useState(0); // Pagination
-  const { data, isLoading } = useFetch(endPoints.products.getProducts(PRODUCTS_LIMIT, productOffset)); // Fetch products with pagination
-  const { data: totalData } = useFetch(endPoints.products.getProducts(0, 0)); // Fetch total products
+  const [products, setProducts] = useState([]); // Products state
+  const [totalProducts, setTotalProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false); // Loading state
+  // const { data: totalData } = useFetch(endPoints.products.getProducts(0, 0)); // Fetch total products
+  // const { data, isLoading } = useFetch(endPoints.products.getProducts(PRODUCTS_LIMIT, productOffset)); // Fetch products with pagination
 
   // Fetch products by pagination using offset and limit
   const handleUpdateProducts = (action) => {
@@ -40,9 +43,19 @@ const Products = () => {
     }
   }, [auth.user, route]);
 
+  // Fetch products
   useEffect(() => {
-    handleGoToPage(1);
-  }, [modal]);
+    const getProducts = async () => {
+      setIsLoading(true);
+      const { data } = await axios.get(endPoints.products.getProducts(PRODUCTS_LIMIT, productOffset));
+      const { data: totalData } = await axios.get(endPoints.products.getProducts(0, 0));
+      setProducts(data);
+      setTotalProducts(totalData);
+      setIsLoading(false);
+    };
+
+    getProducts();
+  }, [alert, productOffset]);
 
   if (isLoading) {
     return <Loading />;
@@ -65,11 +78,12 @@ const Products = () => {
         </Modal>
       </div>
       <ProductsList
-        products={data}
+        products={products}
         onUpdateProducts={handleUpdateProducts}
         currentPage={productOffset / PRODUCTS_LIMIT + 1}
-        totalPages={Math.floor(totalData.length / PRODUCTS_LIMIT)}
+        totalPages={Math.ceil(totalProducts.length / PRODUCTS_LIMIT)}
         goToPage={handleGoToPage}
+        setAlert={setAlert}
       />
     </>
   );

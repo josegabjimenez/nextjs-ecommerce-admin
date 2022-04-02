@@ -1,12 +1,32 @@
 import React from 'react';
 import Image from 'next/image';
-import { EditProductModal, Modal } from '@components/index';
+import { EditProductModal, Modal } from '@components/index'; // Components
+import { deleteProduct } from '@services/api/products'; // Products api methods
 
-const ProductsList = ({ products, onUpdateProducts, currentPage, totalPages, goToPage }) => {
+const ProductsList = ({ products, onUpdateProducts, currentPage, totalPages, goToPage, setAlert }) => {
   const buttons = [];
   for (let i = 0; i < totalPages; i++) {
     buttons.push(i + 1);
   }
+
+  const handleDeleteProduct = async (id) => {
+    try {
+      await deleteProduct(id);
+      setAlert({
+        active: true,
+        type: 'success',
+        message: 'Producto eliminado correctamente',
+        autoClose: true,
+      });
+    } catch (err) {
+      setAlert({
+        active: true,
+        type: 'error',
+        message: 'Error al eliminar el producto, vuelve a intentarlo',
+        autoClose: true,
+      });
+    }
+  };
 
   return (
     <>
@@ -74,7 +94,9 @@ const ProductsList = ({ products, onUpdateProducts, currentPage, totalPages, goT
                     </td>
                     <td>
                       {/* Delete button */}
-                      <button className="btn btn-warning btn-xs">Eliminar</button>
+                      <button className="btn btn-error btn-xs" onClick={() => handleDeleteProduct(product.id)}>
+                        Eliminar
+                      </button>
                     </td>
                   </tr>
                 );

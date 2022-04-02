@@ -7,9 +7,10 @@ const endPoints = {
   },
   products: {
     getProducts: (limit, offset) => `${config.apiUrl}/api/${config.apiVersion}/products?limit=${limit}&offset=${offset}`,
-    getProduct: (id) => `${config.apiUrl}/api/${config.apiVersion}/products/${id}`,
+    getProduct: (productId) => `${config.apiUrl}/api/${config.apiVersion}/products/${productId}`,
     AddProduct: `${config.apiUrl}/api/${config.apiVersion}/products`,
     getProductsByCategory: (categoryId) => `${config.apiUrl}/api/${config.apiVersion}/categories/${categoryId}/products`,
+    deleteProduct: (productId) => `${config.apiUrl}/api/${config.apiVersion}/products/${productId}`,
   },
   categories: {
     getCategories: `${config.apiUrl}/api/${config.apiVersion}/categories`,

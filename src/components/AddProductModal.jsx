@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 // Components
 import { WarningAlert } from '@components/index';
 import NumberFormat from 'react-number-format';
@@ -8,7 +8,8 @@ import { useForm, Controller } from 'react-hook-form';
 import endPoints from '@services/api/index';
 import { addProduct } from '@services/api/products';
 
-const AddProductModal = ({ setAlert, setModal }) => {
+const AddProductModal = ({ setAlert, setModal, product }) => {
+  const categoryRef = useRef();
   const { data: categories } = useFetch(endPoints.categories.getCategories); // Get categories
   const {
     control,
@@ -45,6 +46,10 @@ const AddProductModal = ({ setAlert, setModal }) => {
     }
   };
 
+  useEffect(() => {
+    categoryRef.current.value = product?.category?.id;
+  }, [product]);
+
   return (
     <>
       <form className="grid grid-cols-2 gap-4 py-4" onSubmit={handleSubmit(submit)}>
@@ -60,6 +65,7 @@ const AddProductModal = ({ setAlert, setModal }) => {
             {/* Input */}
             <input
               {...register('title', { required: { value: true, message: 'El campo es requerido' } })}
+              defaultValue={product?.title}
               id="title"
               type="text"
               placeholder="Título del producto"
@@ -91,12 +97,12 @@ const AddProductModal = ({ setAlert, setModal }) => {
               render={({ field: { value, onChange, name } }) => (
                 <NumberFormat
                   id={name}
-                  value={value}
+                  value={value ? value : product?.price ? product?.price : value}
                   onValueChange={(values) => onChange(values.value)}
                   thousandSeparator={true}
                   prefix="$"
                   className={`input input-bordered input-sm ${errors.price ? 'border-red-500' : ''}`}
-                  inputmode="numeric"
+                  inputMode="numeric"
                   placeholder="Precio del producto"
                 />
               )}
@@ -115,8 +121,13 @@ const AddProductModal = ({ setAlert, setModal }) => {
               Categoria
             </span>
             {/* Input */}
-            <select {...register('categoryId', { required: { value: true, message: 'El campo es requerido' } })} className="select select-bordered font-normal select-sm">
-              <option disabled selected className="text-gray-400">
+            <select
+              ref={categoryRef}
+              defaultValue={product ? product?.category?.id : 0}
+              {...register('categoryId', { required: { value: true, message: 'El campo es requerido' } })}
+              className="select select-bordered font-normal select-sm"
+            >
+              <option disabled value={0} className="text-gray-400">
                 Elige una categoria
               </option>
               {categories?.map((category) => (
