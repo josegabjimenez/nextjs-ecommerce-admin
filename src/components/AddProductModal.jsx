@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 // Components
 import { WarningAlert } from '@components/index';
 import NumberFormat from 'react-number-format';
@@ -9,7 +9,9 @@ import endPoints from '@services/api/index';
 import { addProduct } from '@services/api/products';
 
 const AddProductModal = ({ setAlert, setModal, product }) => {
-  const categoryRef = useRef();
+  const categoryRef = useRef(null);
+  const imageRef = useRef(null);
+  const [imageFileName, setImageFileName] = useState('Elige una imagen');
   const { data: categories } = useFetch(endPoints.categories.getCategories); // Get categories
   const {
     control,
@@ -47,8 +49,15 @@ const AddProductModal = ({ setAlert, setModal, product }) => {
   };
 
   useEffect(() => {
-    categoryRef.current.value = product?.category?.id;
-  }, [product]);
+    // console.log(categoryRef);
+    if (product && product.images) {
+      categoryRef.current.value = product.category.id;
+      imageRef.current.filename = product.images[0];
+      setImageFileName(product.images[0]);
+    } else {
+      categoryRef.current.value = -1;
+    }
+  }, [categoryRef, product]);
 
   return (
     <>
@@ -121,17 +130,12 @@ const AddProductModal = ({ setAlert, setModal, product }) => {
               Categoria
             </span>
             {/* Input */}
-            <select
-              ref={categoryRef}
-              defaultValue={product ? product?.category?.id : 0}
-              {...register('categoryId', { required: { value: true, message: 'El campo es requerido' } })}
-              className="select select-bordered font-normal select-sm"
-            >
-              <option disabled value={0} className="text-gray-400">
+            <select {...register('categoryId', { required: { value: true, message: 'El campo es requerido' } })} className="select select-bordered font-normal select-sm" ref={categoryRef}>
+              <option disabled value={-1} className="text-gray-400">
                 Elige una categoria
               </option>
               {categories?.map((category) => (
-                <option key={category.id} value={category.id}>
+                <option key={`category-${category.id}`} value={category.id}>
                   {category.name}
                 </option>
               ))}
@@ -148,7 +152,7 @@ const AddProductModal = ({ setAlert, setModal, product }) => {
             </svg>
             Descripción
           </span>
-          <textarea {...register('description')} className="textarea textarea-bordered" placeholder="Descripción del producto" />
+          <textarea {...register('description')} defaultValue={product?.description} className="textarea textarea-bordered" placeholder="Descripción del producto" />
         </label>
 
         {/* Upload product image section */}
@@ -166,9 +170,17 @@ const AddProductModal = ({ setAlert, setModal, product }) => {
                 errors.images ? 'ring-red-500 ring-1' : ''
               }`}
             >
-              Elige una imagen
+              {imageFileName}
             </label>
-            <input {...register('images', { required: { value: true, message: 'El campo es requerido' } })} placeholder="Subir la imagen del producto" className="hidden" id="image" type="file" />
+            <input
+              {...register('images', { required: { value: true, message: 'El campo es requerido' } })}
+              ref={imageRef}
+              placeholder="Subir la imagen del producto"
+              className="hidden"
+              id="image"
+              type="file"
+              onChange={() => setImageFileName(imageRef.current.files[0]?.name)}
+            />
           </label>
           {errors?.images?.type === 'required' && <WarningAlert className="text-xs mt-1 rounded-md">{errors.images.message}</WarningAlert>}
         </div>
