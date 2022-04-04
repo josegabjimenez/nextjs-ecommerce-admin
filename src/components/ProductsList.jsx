@@ -75,7 +75,7 @@ const ProductsList = ({ products, onUpdateProducts, currentPage, totalPages, goT
                     </td>
                     <td>
                       {/* Edit button */}
-                      <label htmlFor={`edit-product-modal-${product.id}`} className="btn modal-button btn-success btn-xs ">
+                      <label htmlFor={`edit-product-modal-${product.id}`} className="btn modal-button btn-secondary btn-xs ">
                         Editar
                       </label>
 

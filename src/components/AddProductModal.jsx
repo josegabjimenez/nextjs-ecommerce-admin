@@ -2,25 +2,27 @@ import React, { useState, useEffect, useRef } from 'react';
 // Components
 import { WarningAlert } from '@components/index';
 import NumberFormat from 'react-number-format';
-// Hooks
+import { useRouter } from 'next/router';
 import useFetch from '@hooks/useFetch';
 import { useForm, Controller } from 'react-hook-form';
 import endPoints from '@services/api/index';
-import { addProduct } from '@services/api/products';
+import { addProduct, updateProduct } from '@services/api/products';
 
 const AddProductModal = ({ setAlert, setModal, product }) => {
-  const categoryRef = useRef(null);
-  const imageRef = useRef(null);
+  const categoryRef = useRef(null); // Ref to select default category
+  const imageRef = useRef(null); // Ref to input image
+  const route = useRouter(); // Router to redirect to products page
   const [imageFileName, setImageFileName] = useState('Elige una imagen');
   const { data: categories } = useFetch(endPoints.categories.getCategories); // Get categories
+  // Form methods
   const {
     control,
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm(); // Form methods
+  } = useForm();
 
-  // It sends the product to the server and closes the modal
+  // It sends the product to the server and added or updated it
   const submit = async (data) => {
     const fullData = {
       ...data,
@@ -29,22 +31,42 @@ const AddProductModal = ({ setAlert, setModal, product }) => {
       images: [data.images[0].name],
     };
 
-    try {
-      await addProduct(fullData);
-      setModal({ close: true });
-      setAlert({
-        active: true,
-        type: 'success',
-        message: 'Producto añadido correctamente',
-        autoClose: true,
-      });
-    } catch (err) {
-      setAlert({
-        active: true,
-        type: 'error',
-        message: 'Error al añadir el producto',
-        autoClose: false,
-      });
+    if (product) {
+      try {
+        await updateProduct(product.id, fullData);
+        setAlert({
+          active: true,
+          type: 'success',
+          message: 'Producto actualizado correctamente',
+          autoClose: true,
+        });
+        route.push('/products');
+      } catch (err) {
+        setAlert({
+          active: true,
+          type: 'error',
+          message: 'Error al actualizar el producto',
+          autoClose: true,
+        });
+      }
+    } else {
+      try {
+        await addProduct(fullData);
+        setModal({ close: true });
+        setAlert({
+          active: true,
+          type: 'success',
+          message: 'Producto añadido correctamente',
+          autoClose: true,
+        });
+      } catch (err) {
+        setAlert({
+          active: true,
+          type: 'error',
+          message: 'Error al añadir el producto',
+          autoClose: false,
+        });
+      }
     }
   };
 
@@ -187,7 +209,7 @@ const AddProductModal = ({ setAlert, setModal, product }) => {
 
         <div className="w-full no-animation flex justify-end col-span-2">
           {/* Modal action buttons */}
-          <button className="btn btn-primary">Publicar nuevo producto</button>
+          <button className={`btn btn-primary ${product && 'btn-block btn-secondary'}`}>{product ? 'Editar producto' : 'Publicar nuevo producto'}</button>
         </div>
       </form>
     </>
