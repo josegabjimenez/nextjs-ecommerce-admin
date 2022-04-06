@@ -15,12 +15,25 @@ const AddProductModal = ({ setAlert, setModal, product }) => {
   const [imageFileName, setImageFileName] = useState('Elige una imagen');
   const { data: categories } = useFetch(endPoints.categories.getCategories); // Get categories
   // Form methods
+  const defaultData = {
+    title: product.title || 'Título',
+    images: [product.images?.[0]] || 'Elige una imagen',
+    price: product.price || 0,
+    categoryId: product.category?.id || -1,
+    description: product.description || 'Descripción',
+  };
+
   const {
     control,
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: defaultData,
+  });
+
+  const categoryReg = register('categoryId', { required: { value: true, message: 'El campo es requerido' } });
+  const imageReg = register('images');
 
   // It sends the product to the server and added or updated it
   const submit = async (data) => {
@@ -31,23 +44,24 @@ const AddProductModal = ({ setAlert, setModal, product }) => {
       images: [data.images[0].name],
     };
 
+    // It checks if the product is being updated or added
     if (product) {
       try {
         await updateProduct(product.id, fullData);
-        setAlert({
-          active: true,
-          type: 'success',
-          message: 'Producto actualizado correctamente',
-          autoClose: true,
-        });
+        // setAlert({
+        //   active: true,
+        //   type: 'success',
+        //   message: 'Producto actualizado correctamente',
+        //   autoClose: true,
+        // });
         route.push('/products');
       } catch (err) {
-        setAlert({
-          active: true,
-          type: 'error',
-          message: 'Error al actualizar el producto',
-          autoClose: true,
-        });
+        // setAlert({
+        //   active: true,
+        //   type: 'error',
+        //   message: 'Error al actualizar el producto',
+        //   autoClose: true,
+        // });
       }
     } else {
       try {
@@ -71,15 +85,15 @@ const AddProductModal = ({ setAlert, setModal, product }) => {
   };
 
   useEffect(() => {
-    // console.log(categoryRef);
-    if (product && product.images) {
-      categoryRef.current.value = product.category.id;
-      imageRef.current.filename = product.images[0];
-      setImageFileName(product.images[0]);
-    } else {
-      categoryRef.current.value = -1;
-    }
-  }, [categoryRef, product]);
+    // console.log(imageRef);
+    categoryRef.current.value = product.category.id;
+    setImageFileName(product.images[0]);
+    // if (product && product.images) {
+    //   // categoryRef.current.value = product.category.id;
+    // } else {
+    //   categoryRef.current.value = -1;
+    // }
+  }, [categoryRef, product.category.id]);
 
   return (
     <>
@@ -96,7 +110,7 @@ const AddProductModal = ({ setAlert, setModal, product }) => {
             {/* Input */}
             <input
               {...register('title', { required: { value: true, message: 'El campo es requerido' } })}
-              defaultValue={product?.title}
+              // defaultValue={product?.title}
               id="title"
               type="text"
               placeholder="Título del producto"
@@ -152,7 +166,15 @@ const AddProductModal = ({ setAlert, setModal, product }) => {
               Categoria
             </span>
             {/* Input */}
-            <select {...register('categoryId', { required: { value: true, message: 'El campo es requerido' } })} className="select select-bordered font-normal select-sm" ref={categoryRef}>
+            <select
+              // {...register('categoryId', { required: { value: true, message: 'El campo es requerido' } })}
+              {...categoryReg}
+              ref={(e) => {
+                categoryReg.ref(e);
+                categoryRef.current = e;
+              }}
+              className="select select-bordered font-normal select-sm"
+            >
               <option disabled value={-1} className="text-gray-400">
                 Elige una categoria
               </option>
@@ -195,13 +217,20 @@ const AddProductModal = ({ setAlert, setModal, product }) => {
               {imageFileName}
             </label>
             <input
-              {...register('images', { required: { value: true, message: 'El campo es requerido' } })}
-              ref={imageRef}
+              // {...register('images', { required: { value: true, message: 'El campo es requerido' } })}
+              {...imageReg}
+              ref={(e) => {
+                imageReg.ref(e);
+                imageRef.current = e;
+              }}
               placeholder="Subir la imagen del producto"
               className="hidden"
               id="image"
               type="file"
-              onChange={() => setImageFileName(imageRef.current.files[0]?.name)}
+              onChange={(e) => {
+                imageReg.onChange(e);
+                setImageFileName(e.target.files[0]?.name);
+              }}
             />
           </label>
           {errors?.images?.type === 'required' && <WarningAlert className="text-xs mt-1 rounded-md">{errors.images.message}</WarningAlert>}

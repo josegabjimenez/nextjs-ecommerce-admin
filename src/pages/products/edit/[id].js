@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { AddProductModal } from '@components/index';
+import { AddProductModal, Loading } from '@components/index';
 import axios from 'axios';
 import endPoints from '@services/api/index';
 import { useAuth } from '@hooks/useAuth';
 
 const Edit = () => {
   const [product, setProduct] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
   const route = useRouter();
   const auth = useAuth();
 
@@ -26,14 +27,16 @@ const Edit = () => {
     const { id } = route.query;
     // Fetch product
     const getProduct = async () => {
+      setIsLoading(true);
       const { data } = await axios.get(endPoints.products.getProduct(id));
       setProduct(data);
+      setIsLoading(false);
     };
 
     getProduct();
   }, [route.isReady, route.query]);
 
-  console.log(product);
+  if (isLoading) return <Loading />;
 
   return (
     <div>
