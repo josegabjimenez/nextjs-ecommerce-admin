@@ -1,14 +1,24 @@
 import React from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import { EditProductModal, Modal } from '@components/index'; // Components
 import { deleteProduct } from '@services/api/products'; // Products api methods
 
 const ProductsList = ({ products, onUpdateProducts, currentPage, totalPages, goToPage, setAlert }) => {
+  const route = useRouter();
+
+  // Calculates the number of buttons per page
   const buttons = [];
   for (let i = 0; i < totalPages; i++) {
     buttons.push(i + 1);
   }
 
+  // Redirects to edit product page
+  const handleEditProduct = (id) => {
+    route.push(`/products/edit/${id}`);
+  };
+
+  // Delete a product
   const handleDeleteProduct = async (id) => {
     try {
       await deleteProduct(id);
@@ -75,22 +85,22 @@ const ProductsList = ({ products, onUpdateProducts, currentPage, totalPages, goT
                     </td>
                     <td>
                       {/* Edit button */}
-                      <label htmlFor={`edit-product-modal-${product.id}`} className="btn modal-button btn-secondary btn-xs ">
+                      <label htmlFor={`edit-product-modal-${product.id}`} className="btn modal-button btn-secondary btn-xs" onClick={() => handleEditProduct(product.id)}>
                         Editar
                       </label>
 
                       {/* Modal to edit a product */}
-                      <Modal id={`edit-product-modal-${product.id}`}>
-                        {/* Edit product options */}
+                      {/* <Modal id={`edit-product-modal-${product.id}`}>
+                        Edit product options
                         <EditProductModal product={product} />
                         <div className="w-full no-animation flex justify-end gap-2">
-                          {/* Modal action buttons */}
+                          Modal action buttons
                           <button className="btn btn-primary">Guardar cambios</button>
                           <label htmlFor={`edit-product-modal-${product.id}`} className="btn btn-primary btn-outline">
                             Cancelar
                           </label>
                         </div>
-                      </Modal>
+                      </Modal> */}
                     </td>
                     <td>
                       {/* Delete button */}

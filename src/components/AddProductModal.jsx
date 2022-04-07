@@ -16,11 +16,11 @@ const AddProductModal = ({ setAlert, setModal, product }) => {
   const { data: categories } = useFetch(endPoints.categories.getCategories); // Get categories
   // Form methods
   const defaultData = {
-    title: product.title || 'Título',
-    images: [product.images?.[0]] || 'Elige una imagen',
-    price: product.price || 0,
-    categoryId: product.category?.id || -1,
-    description: product.description || 'Descripción',
+    title: product?.title || undefined,
+    images: [product?.images[0]] || undefined,
+    price: product?.price || undefined,
+    categoryId: product?.category?.id || 1,
+    description: product?.description || undefined,
   };
 
   const {
@@ -33,16 +33,19 @@ const AddProductModal = ({ setAlert, setModal, product }) => {
   });
 
   const categoryReg = register('categoryId', { required: { value: true, message: 'El campo es requerido' } });
-  const imageReg = register('images');
+  const imageReg = register('images', { required: { value: false, message: 'El campo es requerido' } });
 
   // It sends the product to the server and added or updated it
   const submit = async (data) => {
+    const imageToUpload = data.images[0].name || data.images[0];
     const fullData = {
       ...data,
       price: parseInt(data.price),
       categoryId: parseInt(data.categoryId),
-      images: [data.images[0].name],
+      images: [imageToUpload],
     };
+    console.log(data);
+    console.log(fullData);
 
     // It checks if the product is being updated or added
     if (product) {
@@ -86,14 +89,14 @@ const AddProductModal = ({ setAlert, setModal, product }) => {
 
   useEffect(() => {
     // console.log(imageRef);
-    categoryRef.current.value = product.category.id;
-    setImageFileName(product.images[0]);
+    categoryRef.current.value = product?.category.id;
+    setImageFileName(product?.images[0]);
     // if (product && product.images) {
     //   // categoryRef.current.value = product.category.id;
     // } else {
     //   categoryRef.current.value = -1;
     // }
-  }, [categoryRef, product.category.id]);
+  }, [categoryRef, product?.category.id]);
 
   return (
     <>
