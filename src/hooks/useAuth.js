@@ -43,11 +43,15 @@ const useProviderAuth = () => {
         name: 'Jose Gabriel',
       };
       setUser(fakeUser);
+      const cookie = Cookie.get('access_token');
+      console.log(cookie);
     }
   };
 
   const logOut = () => {
+    Cookie.remove('access_token');
     setUser(null);
+    delete axios.defaults.headers.Authorization;
   };
 
   return {
