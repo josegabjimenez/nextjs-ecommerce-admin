@@ -43,8 +43,9 @@ const useProviderAuth = () => {
         name: 'Jose Gabriel',
       };
       setUser(fakeUser);
-      const cookie = Cookie.get('access_token');
-      console.log(cookie);
+      // Reading a cookie value test
+      // const cookie = Cookie.get('access_token');
+      // console.log(cookie);
     }
   };
 

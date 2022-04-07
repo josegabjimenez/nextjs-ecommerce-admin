@@ -11,16 +11,16 @@ const Edit = () => {
   const route = useRouter();
   const auth = useAuth();
 
-  //   useEffect(() => {
-  //     // Redirects to main page if there is no user logged
-  //     const checkIfLoggedIn = () => {
-  //       if (!auth.user) {
-  //         route.push('/');
-  //       }
-  //     };
+  useEffect(() => {
+    // Redirects to main page if there is no user logged
+    const checkIfLoggedIn = () => {
+      if (!auth.user) {
+        route.push('/');
+      }
+    };
 
-  //     checkIfLoggedIn();
-  //   }, []);
+    checkIfLoggedIn();
+  }, []);
 
   useEffect(() => {
     if (!route.isReady) return;

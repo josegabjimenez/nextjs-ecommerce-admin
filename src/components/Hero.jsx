@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { gsap } from 'gsap';
 
 const Hero = () => {
@@ -18,7 +19,10 @@ const Hero = () => {
   return (
     <div className="hero text-center sm:text-left">
       <div className="hero-content flex-col lg:flex-row-reverse">
-        <img ref={heroImageRef} src="/logo512.png" alt="Logo de la Parroquia Misericordia Divina" className="hidden sm:block max-w-sm rounded-lg object-scale-down" />
+        <div className="hidden sm:block max-w-sm rounded-lg w-1/2 object-scale-down">
+          <Image width="100%" height="100%" layout="responsive" ref={heroImageRef} src="/logo512.png" alt="Logo de la Parroquia Misericordia Divina" />
+        </div>
+
         <div ref={heroTextRef} className="p-4 sm:p-12">
           <h1 className="text-4xl sm:text-5xl font-bold">Bienvenido al panel principal del pulguero.</h1>
           <p className="py-6">Desde aquí podrás administrar la plataforma virtual del pulguero perteneciente a la parroquia misericordia divina.</p>

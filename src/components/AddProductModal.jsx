@@ -44,8 +44,8 @@ const AddProductModal = ({ setAlert, setModal, product }) => {
       categoryId: parseInt(data.categoryId),
       images: [imageToUpload],
     };
-    console.log(data);
-    console.log(fullData);
+    // console.log(data);
+    // console.log(fullData);
 
     // It checks if the product is being updated or added
     if (product) {
@@ -96,7 +96,7 @@ const AddProductModal = ({ setAlert, setModal, product }) => {
     // } else {
     //   categoryRef.current.value = -1;
     // }
-  }, [categoryRef, product?.category.id]);
+  }, [categoryRef, product?.category.id, product?.images]);
 
   return (
     <>

@@ -1,10 +1,11 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import React from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { EditProductModal, Modal } from '@components/index'; // Components
 import { deleteProduct } from '@services/api/products'; // Products api methods
 
-const ProductsList = ({ products, onUpdateProducts, currentPage, totalPages, goToPage, setAlert }) => {
+const ProductsList = ({ products, currentPage, totalPages, goToPage, setAlert }) => {
   const route = useRouter();
 
   // Calculates the number of buttons per page

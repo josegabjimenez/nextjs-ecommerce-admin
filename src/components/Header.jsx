@@ -1,5 +1,7 @@
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@hooks/useAuth';
 import { useRouter } from 'next/router';
 
@@ -70,9 +72,9 @@ const Header = () => {
         ) : (
           <div className="dropdown dropdown-end">
             <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
-              <div className="w-10 rounded-full">
+              <div className="w-10 rounded-full bg-red-500 overflow-hidden">
                 {/* <img src="https://api.lorem.space/image/face?hash=33791" /> */}
-                <img src={`https://ui-avatars.com/api/?background=random&name=${auth.user.name}`} />
+                <Image objectFit="contain" layout="fill" src={`https://ui-avatars.com/api/?background=random&name=${auth.user.name}`} alt="Foto de perfil" />
               </div>
             </label>
             <ul tabIndex={0} className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-primary text-white rounded-box w-52">
